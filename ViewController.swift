@@ -3,7 +3,6 @@
 //  VisionAPINew
 //
 //  Created by Kendrick Lee on 11/18/21.
-//
 
 // Super messy, fix later in production
 
@@ -15,6 +14,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Startup Camera
         print("test")
         let captureSession = AVCaptureSession()
@@ -33,19 +33,19 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         captureSession.startRunning()
         
+        // Make camera visible
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         view.layer.addSublayer(previewLayer)
         previewLayer.frame = view.frame
         
+        // Make an output from the camera
         let dataOutput = AVCaptureVideoDataOutput()
         dataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
         captureSession.addOutput(dataOutput)
-        
-        //VNImageRequestHandler(cgImage: <#T##CGImage#>, options: [:]).perform([request])
+
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        //print("Camera was able to capture", Date())
         
         guard let pixelBuffer: CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
@@ -53,7 +53,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         let request = VNCoreMLRequest(model: model) { (finishedReq, err) in
             // print(finishedReq.results)
-            
+            // finishedReq.results is raw result data (unusable)
+                                                     
             guard let results = finishedReq.results as? [VNClassificationObservation] else { return }
             
             guard let firstObservation = results.first else { return }
@@ -61,6 +62,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             print(firstObservation.identifier, firstObservation.confidence)
         }
         
+        // Sends request to the algorithm (Resnet50)
         try? VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:]).perform([request])
     }
 }

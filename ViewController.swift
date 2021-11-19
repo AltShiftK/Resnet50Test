@@ -5,6 +5,8 @@
 //  Created by Kendrick Lee on 11/18/21.
 //
 
+// Super messy, fix later in production
+
 import UIKit
 import AVKit
 import Vision

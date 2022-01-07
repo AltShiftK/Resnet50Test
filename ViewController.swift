@@ -27,6 +27,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let captureSession = AVCaptureSession()
         captureSession.sessionPreset = .photo
         
+        let screenSize: CGRect = UIScreen.main.bounds
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        let xPos = 0
+        let yPos = 850
+        let rectWidth = Int(screenWidth)
+        let rectHeight = 50
+        
         let captureDevice = AVCaptureDevice.default(for: .video)
         do {
             let input = try AVCaptureDeviceInput(device: captureDevice!)
@@ -48,15 +56,19 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Make overlays visible
         var previewView = UIView(frame: view.frame)
         view.addSubview(previewView)
-        previewView.layer.addSublayer(previewLayer)
 
 
         let subButton = UIButton()
         subButton.setBackgroundImage(UIImage(named: "capImage"), for: UIControl.State.normal)
-        subButton.frame = CGRect(x: 15, y: 50, width: 60, height: 60)
-        subButton.center.x = view.center.x
+        subButton.frame = CGRect(x: 175, y: 750, width: 75, height: 75)
         self.view.addSubview(subButton)
-
+        
+        let rectFrame: CGRect = CGRect(x:CGFloat(xPos), y:CGFloat(yPos), width:CGFloat(rectWidth), height:CGFloat(rectHeight))
+        let rectView = UIView(frame: rectFrame)
+        rectView.backgroundColor = UIColor.black
+        self.view.addSubview(rectView)
+        
+        
         // Make an output from the camera
         let dataOutput = AVCaptureVideoDataOutput()
         dataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
@@ -67,11 +79,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     fileprivate func setupIdentifierConfidenceLabel(){
         view.addSubview(identifierLabel)
-        identifierLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32).isActive = true
+        identifierLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 150).isActive = true
         identifierLabel.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         identifierLabel.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         identifierLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
     }
+    
+    
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
